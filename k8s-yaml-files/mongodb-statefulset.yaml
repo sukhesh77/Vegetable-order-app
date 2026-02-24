@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: veg-mongodb
+  namespace: sukhesh-ns
+spec:
+  replicas: 5
+  serviceName: "mongodb"
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:latest
+        ports:
+        - containerPort: 27017
+        env:
+          - name: MONGO_INITDB_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: veg-config
+                key: MONGO_INITDB_DATABASE
+  volumeClaimTemplates:  # it is referencing pvc automatically instead of refering pvc manually in the pod or yaml file
+    - metadata:
+        name: mongo-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: veg-sc
+        resources:
+          requests:
+            storage: 1Gi

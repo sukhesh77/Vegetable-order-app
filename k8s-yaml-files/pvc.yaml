@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: veg-mongodb-pvc
+  namespace: sukhesh-ns
+
+spec:
+  accessModes:
+  - ReadWriteOnce
+
+  resources:
+    requests:
+      storage: 2Gi
+
+  storageClassName: veg-sc

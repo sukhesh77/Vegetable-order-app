@@ -6,10 +6,9 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: vegetable
+    app: veg
   ports:
   - protocol: TCP
     port: 80
-    targetPort: 3000
-    protocol: TCP  
+    targetPort: 3000  
       
