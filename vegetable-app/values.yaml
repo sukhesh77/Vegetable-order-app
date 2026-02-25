@@ -1,60 +1,52 @@
 namespace: sukhesh-ns
 
-# ---------------- CONFIGMAP ----------------
+# ConfigMap details
 configmap:
-  name: vegetable-app-config
   data:
-    MONGO_URI: "mongodb://mongodb-service:27017/vegetable_order_app"
-    MONGO_INITDB_DATABASE: "vegetable_order_app"
+    MONGO_URI: mongodb://mongodb-svc:27017/vegetable-order-app
+    MONGO_INITDB_DATABASE: vegetable-order-app
 
-# ---------------- APP DEPLOYMENT ----------------
+# Application Deployment
 deployment:
-  name: vegetable-order-app
   replicas: 2
-  appLabel: vegetable-order-app
-  image: sukhesh77/vegetable-order-app:v1.0.1
+  labels:
+    app: vegetable-order-app
+  containerName: veg-container
+  image:
+    repository: sukhesh77/vegetable-order-app
+    tag: v1
   port: 3000
 
-# ---------------- APP SERVICE ----------------
+# Application Service
 service:
-  name: vegetable-order-service
+  name: vegetable-order-app
   type: LoadBalancer
   port: 3000
-  targetPort: 3000
 
-# ---------------- MONGODB STATEFULSET ----------------
-statefulset:
-  name: mongodb
-  replicas: 2
-  serviceName: mongodb-headless
-  appLabel: mongodb
-  image: mongo:latest
+# MongoDB StatefulSet
+mongodb:
+  replicas: 1
+  serviceName: mongodb-svc
+  app: mongodb
+  containerName: mongodb-container
+  repository: mongo
+  tag: latest
   port: 27017
-  mountPath: /data/db
+  volume:
+    name: mongodb-volume
+    mountPath: /data/db
+    accessMode: ReadWriteOnce
+    size: 2Gi
 
-# ---------------- MONGODB SERVICE ----------------
-mongodbService:
-  name: mongodb-service
-  port: 27017
-
-# ---------------- HEADLESS SERVICE ----------------
-headless:
-  name: mongodb-headless
-  port: 27017
-
-# ---------------- PVC ----------------
+# PVC
 pvc:
-  name: mongodb-pvc
-  storageClassName: veg-sc
-  accessModes:
-    - ReadWriteOnce
-  storage: 2Gi
+  accessMode: ReadWriteOnce
+  size: 2Gi
 
-# ---------------- STORAGE CLASS ----------------
+# StorageClass
 storageClass:
-  name: veg-sc
+  name: veg-storage-class
   provisioner: ebs.csi.aws.com
   reclaimPolicy: Retain
   volumeBindingMode: WaitForFirstConsumer
-  parameters:
-    type: gp3
+  type: gp3
