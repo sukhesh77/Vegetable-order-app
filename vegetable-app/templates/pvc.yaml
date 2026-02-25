@@ -4,9 +4,9 @@ metadata:
   name: {{ .Release.Name }}-pvc
   namespace: {{ .Values.namespace }}
 spec:
-  accessModes:  
-    {{ .Values.pvc.accessModes }}
+  accessModes:
+    - {{ .Values.pvc.accessMode }}
   resources:
     requests:
-      storage: {{ .Values.pvc.resources.requests.storage }} 
-  storageClassName: {{ .Values.pvc.storageClassName }}
+      storage: {{ .Values.pvc.size }}
+  storageClassName: {{ .Values.storageClass.name }}
