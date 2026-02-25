@@ -8,6 +8,6 @@ spec:
     app: {{ .Values.deployment.labels.app }}
   ports:
     - protocol: TCP
-      port: {{ .Values.deployment.port }}
+      port: {{ .Values.deployment.servicePort }}
       targetPort: {{ .Values.deployment.port }}
-  type: {{ .Values.service.type }}
+  type: {{ .Values.deployment.serviceType }}
