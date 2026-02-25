@@ -4,37 +4,37 @@ metadata:
   name: {{ .Release.Name }}-statefulset
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.statefulset.replicas }}
-  serviceName: {{ .Values.statefulset.serviceName }}
+  serviceName: {{ .Values.mongodb.serviceName }}
+  replicas: {{ .Values.mongodb.replicas }}
   selector:
     matchLabels:
-      app: {{ .Values.statefulset.labels.app }}
+      app: {{ .Values.mongodb.app }}
   template:
     metadata:
       labels:
-        app: {{ .Values.statefulset.labels.app }}
+        app: {{ .Values.mongodb.app }}
     spec:
       containers:
-      - name: {{ .Values.statefulset.containers.name }}
-        image: {{ .Values.statefulset.containers.image }}
-        ports:
-        - containerPort: {{ .Values.statefulset.containers.port }}
-        volumeMounts:
-          - mountPath: {{ .Values.statefulset.containers.volumeMounts.mountPath }}
-            name: {{ .Values.statefulset.containers.volumeMounts.name }}
-        env:
-        - name: {{ .Values.statefulset.containers.env.MONGO_INITDB_DATABASE.name }}
-          valueFrom:
-            configMapKeyRef:
-              name: {{ .Values.statefulset.containers.env.valueFrom.configMapKeyRef }}
-              key: {{ .Values.statefulset.containers.env.valueFrom.key }}
-
-  volumeClaimTemplates:  # it is referencing pvc automatically instead of refering pvc manually in the pod or yaml file
+        - name: {{ .Values.mongodb.containerName }}
+          image: "{{ .Values.mongodb.repository }}:{{ .Values.mongodb.tag }}"
+          ports:
+            - containerPort: {{ .Values.mongodb.port }}
+          volumeMounts:
+            - name: {{ .Values.mongodb.volume.name }}
+              mountPath: {{ .Values.mongodb.volume.mountPath }}
+          env:
+            - name: MONGO_INITDB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}-configmap
+                  key: MONGO_INITDB_DATABASE
+  volumeClaimTemplates:
     - metadata:
-        name: {{ .Values.statefulset.volumeClaims.name }}
+        name: {{ .Values.mongodb.volume.name }}
       spec:
-        accessModes: {{ .Values.statefulset.volumeClaims.accessModes }}
-        storageClassName: {{ .Values.statefulset.volumeClaims.storageClassName }}
+        accessModes:
+          - {{ .Values.mongodb.volume.accessMode }}
+        storageClassName: {{ .Values.storageClass.name }}
         resources:
           requests:
-            storage: {{ .Values.statefulset.volumeClaims.storage }}
+            storage: {{ .Values.mongodb.volume.size }}
