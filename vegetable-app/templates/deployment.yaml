@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}-deployment
   namespace: {{ .Values.namespace }}
 spec:
-  replicas: {{ .Values.replicas }}
+  replicas: {{ .Values.deployment.replicas }}
   selector:
     matchLabels:
       app: {{ .Values.deployment.labels.app }}
@@ -14,13 +14,13 @@ spec:
         app: {{ .Values.deployment.labels.app }}
     spec:
       containers:
-      - name: {{ .Values.deployment.name }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        ports:
-        - containerPort: {{ .Values.deployment.port }}
-        env:
-        - name: {{ .Values.deployment.env.name }}
-          valueFrom:
-            configMapKeyRef:
-              name: {{ .Values.deployment.image.env.configMapKeyRef }}
-              key: {{ .Values.deployment.image.env.key }}
+        - name: {{ .Values.deployment.containerName }}
+          image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.deployment.port }}
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}-configmap
+                  key: MONGO_URI
