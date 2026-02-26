@@ -7,4 +7,5 @@ metadata:
 
 data:
   MONGODB_URL: mongodb://veg-mongodb-service:27017/vegetable_order_app
+  PORT: "3000"
   MONGODB_INITDB_DATABASE: vegetable_order_app
