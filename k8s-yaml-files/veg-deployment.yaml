@@ -1,32 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vegetable-deployment
+  name: vegetable-app-mongodb
   namespace: sukhesh-ns
-
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: vegetable
+      app: mongodb
   template:
     metadata:
       labels:
-        app: vegetable
+        app: mongodb
     spec:
       containers:
-      - name: vegetable
-        image: sukhesh77/vegetable-order-app:v1
+      - name: mongodb
+        image: mongo:latest
         ports:
-        - containerPort: 3000
+        - containerPort: 27017
         env:
-          - name: MONGODB_URI
+          - name: MONGO_INITDB_DATABASE
             valueFrom:
               configMapKeyRef:
-                name: veg-app-config
-                key: MONGODB_URI
-          - name: PORT
-            valueFrom:
-              configMapKeyRef:
-                name: veg-app-config
-                key: PORT
+                name: configmap
+                key: MONGO_INITDB_DATABASE
