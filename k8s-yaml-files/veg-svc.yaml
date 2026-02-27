@@ -6,7 +6,8 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: veg   # Use NodePort if LoadBalancer is not supported
+    app: veg
   ports:
-    - port: 80
+    - protocol: TCP
+      port: 80
       targetPort: 3000
