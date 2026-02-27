@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: configmap
+  name: veg-app-config
   namespace: sukhesh-ns
 data:
   MONGODB_URI: "mongodb://mongodb:27017/vegetable_order_app"
