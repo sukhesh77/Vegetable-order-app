@@ -1,86 +1,95 @@
 namespace: sukhesh-ns
 
-#configmap details
+# configmap
 configmap:
   data:
     MONGO_URI: "mongodb://retail-release-headless:27017/vegetable_order_app"
     MONGO_INITDB_DATABASE: "vegetable_order_app"
 
-#deployment details
+# deployment
 replicas: 5
+
 deployment:
-  name: vegetable-order-app-deployment
+  name: vegetable-app-deployment
   labels:
     app: vegetable-order-app
-  port:  3000
+
+  port: 3000
+
   image:
     repository: sukhesh77/vegetable-order-app
     tag: v1.0.1
-    env:
-      name: MONGO_URI
-      valueFrom:
-        configMapKeyRef:
-          name: retail-release-config
-          key: MONGO_URI
 
-#service details
+  env:
+    name: MONGO_URI
+    valueFrom:
+      configMapKeyRef:
+        name: vegetable-app-config
+        key: MONGO_URI
 
+# service
 service:
   app: vegetable-order-app
   type: LoadBalancer
   port: 3000
 
-
-#mongodb statefulset details
-
-
-statefulset:  
+# mongodb statefulset
+statefulset:
   name: mongodb
   replicas: 1
-  serviceName: "retail-release-headless"
+  serviceName: retail-release-headless
+
   labels:
     app: mongodb
-  containers:
+
+  container:
     name: mongodb
     image: mongo:latest
     port: 27017
-    volumeMounts:
-      name: mongodb-data
-      mountPath: /data/db
-    env:
-       name: MONGO_INITDB_DATABASE
-       valueFrom:
-         configMapKeyRef:
-           name: retail-release-config
-           key: MONGO_INITDB_DATABASE
+
+  volumeMounts:
+    name: mongodb-data
+    mountPath: /data/db
+
+  env:
+    name: MONGO_INITDB_DATABASE
+    valueFrom:
+      configMapKeyRef:
+        name: vegetable-app-config
+        key: MONGO_INITDB_DATABASE
+
   volumeClaims:
     name: mongodb-data
-    accessModes: ["ReadWriteOnce"]
+    accessModes:
+      - ReadWriteOnce
     storageClassName: veg-sc
     storage: 1Gi
 
-#pvc details
+# pvc
 pvc:
   storageClassName: veg-sc
-  accessModes: 
-    ReadWriteOnce
-  resources:
-    requests:
-      storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  storage: 2Gi
 
-#headless service details
+# headless service
 headless:
+  name: retail-release-headless
+
   selector:
     app: mongodb
+
   port: 27017
   targetPort: 27017
   clusterIP: None
 
-#storage class details
+# storage class
 storageClass:
   name: veg-sc
   provisioner: ebs.csi.aws.com
+
   reclaimPolicy: Retain
   volumeBindingMode: WaitForFirstConsumer
+
   parameters:
     type: gp3
