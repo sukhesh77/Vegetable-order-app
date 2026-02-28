@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: veg-app-config
-  namespace: sukhesh-ns
-data:
-  PORT: "3000"
-  MONGODB_URI: "mongodb://veg-mongodb:27017/vegetable_order_app"
