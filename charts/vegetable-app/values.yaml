@@ -1,12 +1,11 @@
 namespace: sukhesh-ns
 
-# configmap
 configmap:
+  name: vegetable-app-config
   data:
     MONGO_URI: "mongodb://retail-release-headless:27017/vegetable_order_app"
     MONGO_INITDB_DATABASE: "vegetable_order_app"
 
-# deployment
 replicas: 5
 
 deployment:
@@ -27,13 +26,11 @@ deployment:
         name: vegetable-app-config
         key: MONGO_URI
 
-# service
 service:
   app: vegetable-order-app
   type: LoadBalancer
   port: 3000
 
-# mongodb statefulset
 statefulset:
   name: mongodb
   replicas: 1
@@ -65,31 +62,24 @@ statefulset:
     storageClassName: veg-sc
     storage: 1Gi
 
-# pvc
 pvc:
   storageClassName: veg-sc
   accessModes:
     - ReadWriteOnce
   storage: 2Gi
 
-# headless service
 headless:
   name: retail-release-headless
-
   selector:
     app: mongodb
-
   port: 27017
   targetPort: 27017
   clusterIP: None
 
-# storage class
 storageClass:
   name: veg-sc
   provisioner: ebs.csi.aws.com
-
   reclaimPolicy: Retain
   volumeBindingMode: WaitForFirstConsumer
-
   parameters:
     type: gp3
